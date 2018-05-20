@@ -4,6 +4,39 @@ using UnityEngine;
 using System.Net.Sockets;
 
 
+
+public struct int2
+{
+	public int x;
+	public int y;
+
+	public int2(int x, int y)
+	{
+		this.x = x;
+		this.y = y;
+	}
+};
+
+public struct Line2
+{
+	public int2 Start;
+	public int2 End;
+
+	public Line2(int2 Start, int2 End)
+	{
+		this.Start = Start;
+		this.End = End;
+	}
+
+	public Line2(int x0, int y0, int x1, int y1)
+	{
+		this.Start = new int2(x0, y1);
+		this.End = new int2(x1, y1);
+	}
+}
+
+
+
 [System.Serializable]
 public class UnityEvent_String : UnityEngine.Events.UnityEvent<string> { };
 
@@ -242,6 +275,21 @@ public class LineusSharp : MonoBehaviour {
 		QueueCommand("G01 X" + x + " Y" + y + " Z" + z);
 	}
 
+
+	public void Draw(IEnumerable<Line2> Lines)
+	{
+		foreach (var Line in Lines)
+		{
+			var x0 = Line.Start.x;
+			var y0 = Line.Start.y;
+			var x1 = Line.End.x;
+			var y1 = Line.End.y;
+			QueueCommand_LiftPen();
+			QueueCommand_MoveTo(x0, y0, false);
+			QueueCommand_MoveTo(x0, y0, true);
+			QueueCommand_MoveTo(x1, y1, true);
+		}
+	}
 
 	public void Draw(IEnumerable<Vector2> Coords)
 	{
