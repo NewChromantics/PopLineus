@@ -23,9 +23,11 @@ public class DrawPicture : MonoBehaviour {
 
 	void ProcessImage()
 	{
+		Debug.Log("OnReady");
 		var Lineus = this.Lineus;
 
 		var Lines = Image.GetLines();
+		Debug.Log("Drawing " + Lines.Count + " lines");
 		Lineus.Draw(Lines);
 	}
 

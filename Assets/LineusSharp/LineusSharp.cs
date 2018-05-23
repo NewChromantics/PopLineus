@@ -4,19 +4,6 @@ using UnityEngine;
 using System.Net.Sockets;
 
 
-
-public struct int2
-{
-	public int x;
-	public int y;
-
-	public int2(int x, int y)
-	{
-		this.x = x;
-		this.y = y;
-	}
-};
-
 public struct Line2
 {
 	public int2 Start;
@@ -37,9 +24,6 @@ public struct Line2
 
 
 
-[System.Serializable]
-public class UnityEvent_String : UnityEngine.Events.UnityEvent<string> { };
-
 public class LineusSharp : MonoBehaviour {
 
 	const string Hostname = "line-us.local";
@@ -49,6 +33,9 @@ public class LineusSharp : MonoBehaviour {
 	const int MaxY = -1000;
 	const int MinX = 700;
 	const int MaxX = 1800;
+
+	[Range(0,1000)]
+	public int SleepBetweenCommands = 200;
 
 	//	protocol stuff
 	public static readonly byte[] LineTerminator = new byte[3] { (byte)'\r', (byte)'\n', (byte)'\0' };
@@ -194,6 +181,7 @@ public class LineusSharp : MonoBehaviour {
 					var PendingCommandBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(PendingCommand);
 					Stream.Write(PendingCommandBytes, 0, PendingCommandBytes.Length);
 					Stream.Write(LineTerminator, 0, LineTerminator.Length);
+					System.Threading.Thread.Sleep(SleepBetweenCommands);
 				}
 			}
 
@@ -280,14 +268,15 @@ public class LineusSharp : MonoBehaviour {
 	{
 		foreach (var Line in Lines)
 		{
-			var x0 = Line.Start.x;
-			var y0 = Line.Start.y;
-			var x1 = Line.End.x;
-			var y1 = Line.End.y;
-			QueueCommand_LiftPen();
+			var x0 = Line.Start.x + MinX;
+			var y0 = Line.Start.y + MinY;
+			var x1 = Line.End.x + MinX;
+			var y1 = Line.End.y + MinY;
+			//QueueCommand_LiftPen();
 			QueueCommand_MoveTo(x0, y0, false);
 			QueueCommand_MoveTo(x0, y0, true);
 			QueueCommand_MoveTo(x1, y1, true);
+			//System.Threading.Thread.Sleep(10);
 		}
 	}
 
